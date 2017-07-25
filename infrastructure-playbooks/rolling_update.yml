@@ -91,6 +91,7 @@
         - not containerized_deployment
 
   roles:
+    - ceph-defaults
     - ceph-mon
 
   post_tasks:
@@ -224,6 +225,7 @@
         - not containerized_deployment
 
   roles:
+    - ceph-defaults
     - ceph-osd
 
   post_tasks:
@@ -341,6 +343,7 @@
         - not containerized_deployment
 
   roles:
+    - ceph-defaults
     - ceph-mds
 
   post_tasks:
@@ -411,6 +414,7 @@
         - not containerized_deployment
 
   roles:
+    - ceph-defaults
     - ceph-rgw
 
   post_tasks:

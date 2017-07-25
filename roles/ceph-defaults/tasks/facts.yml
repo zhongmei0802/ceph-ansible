@@ -1,0 +1,81 @@
+---
+# this task shouldn't run in a rolling_update situation
+# because it blindly picks a mon, which may be down because
+# of the rolling update
+
+- set_fact:
+    monitor_name: "{{ ansible_hostname }}"
+  when: not mon_use_fqdn
+
+- set_fact:
+    monitor_name: "{{ ansible_fqdn }}"
+  when: mon_use_fqdn
+
+- name: is ceph running already?
+  command: ceph --connect-timeout 3 --cluster {{ cluster }} fsid
+  changed_when: false
+  failed_when: false
+  always_run: yes
+  register: ceph_current_fsid
+  delegate_to: "{{ groups[mon_group_name][0] }}"
+  when: not rolling_update
+
+# set this as a default when performing a rolling_update
+# so the rest of the tasks here will succeed
+- set_fact:
+    ceph_current_fsid:
+      rc: 1
+  when: rolling_update
+
+- name: create a local fetch directory if it does not exist
+  local_action: file path={{ fetch_directory }} state=directory
+  changed_when: false
+  become: false
+  run_once: true
+  when: cephx or generate_fsid
+
+- set_fact:
+    fsid: "{{ ceph_current_fsid.stdout }}"
+  when:
+    - ceph_current_fsid.rc == 0
+
+# Set ceph_release to ceph_stable by default
+- set_fact:
+    ceph_release: "{{ ceph_stable_release }}"
+
+# Set ceph_release to latest known release (Which should match ceph_dev)
+- set_fact:
+    ceph_release: "{{ item.key }}"
+  when:
+    - ceph_dev
+    - ({{ item.value }} > ceph_release_num.{{ ceph_release }})
+  with_dict: "{{ ceph_release_num }}"
+
+- name: generate cluster fsid
+  local_action: shell python -c 'import uuid; print(str(uuid.uuid4()))' | tee {{ fetch_directory }}/ceph_cluster_uuid.conf
+    creates="{{ fetch_directory }}/ceph_cluster_uuid.conf"
+  register: cluster_uuid
+  become: false
+  when:
+    - generate_fsid
+    - ceph_current_fsid.rc != 0
+
+- name: reuse cluster fsid when cluster is already running
+  local_action: shell echo {{ fsid }} | tee {{ fetch_directory }}/ceph_cluster_uuid.conf
+    creates="{{ fetch_directory }}/ceph_cluster_uuid.conf"
+  become: false
+  when: ceph_current_fsid.rc == 0
+
+- name: read cluster fsid if it already exists
+  local_action: command cat {{ fetch_directory }}/ceph_cluster_uuid.conf
+    removes="{{ fetch_directory }}/ceph_cluster_uuid.conf"
+  changed_when: false
+  register: cluster_uuid
+  become: false
+  always_run: true
+  when: generate_fsid
+
+- name: set fsid fact when generate_fsid = true
+  set_fact:
+    fsid: "{{ cluster_uuid.stdout }}"
+  when: generate_fsid
