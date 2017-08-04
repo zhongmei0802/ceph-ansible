@@ -39,3 +39,18 @@
   fail:
     msg: "Systemd must be present"
   when: ansible_service_mgr != 'systemd'
+
+- name: fail on unsupported distribution for iscsi gateways
+  fail:
+    msg: "iSCSI gateways can only be deployed on Red Hat Enterprise Linux"
+  when:
+    - ansible_distribution != 'RedHat'
+    - iscsi_gw_group_name in group_names
+
+- name: fail on unsupported distribution version for iscsi gateways
+  fail:
+    msg: "iSCSI gateways can only be deployed on Red Hat Enterprise Linux >= 7.4"
+  when:
+    - ansible_distribution == 'RedHat'
+    - ansible_distribution_version < '7.4'
+    - iscsi_gw_group_name in group_names
