@@ -48,6 +48,10 @@ rgw_pull_proto: "http"
 ##########
 
 ceph_rgw_civetweb_port: "{{ radosgw_civetweb_port }}"
+# You can set `ceph_rgw_docker_extra_env` like following if you want to specify on which IP address you want to bind to:
+# (you have to set `radosgw_civetweb_bind_ip` with the correct IP address in `group_vars/rgw.yml`,
+# by default it will be set to `ansible_default_ipv4.address` which is the IP address in the same subnet of your default gateway.)
+# ceph_rgw_docker_extra_env: -e CLUSTER={{ cluster }} -e RGW_CIVETWEB_PORT={{ ceph_rgw_civetweb_port }} -e RGW_CIVETWEB_IP={{ radosgw_civetweb_bind_ip }}
 ceph_rgw_docker_extra_env: -e CLUSTER={{ cluster }} -e RGW_CIVETWEB_PORT={{ ceph_rgw_civetweb_port }}
 ceph_config_keys: [] # DON'T TOUCH ME
 rgw_config_keys: "/" # DON'T TOUCH ME
