@@ -1,4 +1,7 @@
 ---
+- include: copy_configs.yml
+  when: not containerized_deployment_with_kv
+
 - include: start_docker_monitor.yml
 
 - name: wait for monitor socket to exist
@@ -17,7 +20,7 @@
     - "{{ inventory_hostname == groups[mon_group_name][0] }}"
     - not containerized_deployment_with_kv
 
-- include: copy_configs.yml
+- include: fetch_configs.yml
   when: not containerized_deployment_with_kv
 
 - name: create ceph rest api keyring when mon is containerized
