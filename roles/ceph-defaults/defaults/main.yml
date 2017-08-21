@@ -364,13 +364,17 @@ handler_health_osd_check_retries: 40
 handler_health_osd_check_delay: 30
 handler_health_osd_check: true
 
+###############
+# NFS-GANESHA #
+###############
+
 # Confiure the type of NFS gatway access.  At least one must be enabled for an
 # NFS role to be useful
 #
 # Set this to true to enable File access via NFS.  Requires an MDS role.
-nfs_file_gw: true
+nfs_file_gw: false
 # Set this to true to enable Object access via NFS. Requires an RGW role.
-nfs_obj_gw: false
+nfs_obj_gw: true
 
 ###################
 # CONFIG OVERRIDE #
