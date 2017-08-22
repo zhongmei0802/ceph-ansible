@@ -67,6 +67,7 @@ redhat_package_dependencies:
   - python-pycurl
   - hdparm
   - python-setuptools
+  - libselinux-python
 
 # Enable the ntp service by default to avoid clock skew on
 # ceph nodes
