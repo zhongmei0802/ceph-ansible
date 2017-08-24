@@ -47,7 +47,10 @@ def node(host, request):
     address = host.interface("eth1").addresses[0]
     subnet = ".".join(ansible_vars["public_network"].split(".")[0:-1])
     num_mons = len(ansible_vars["groups"]["mons"])
-    num_devices = len(ansible_vars.get("devices", []))
+    if len(ansible_vars.get("devices", [])) == 0:
+        num_devices = len(ansible_vars.get("devices", []))
+    else:
+        num_devices = len(host.ansible("setup")["ansible_facts"]["devices"])
     if not num_devices:
         num_devices = len(ansible_vars.get("lvm_volumes", []))
     num_osd_hosts = len(ansible_vars["groups"]["osds"])

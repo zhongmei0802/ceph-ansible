@@ -10,6 +10,17 @@
 
 - include: check_devices.yml
 
+- name: generate device list when osd_auto_discovery
+  set_fact:
+    devices: "{{ devices | default([]) + [ item.key | regex_replace('^', '/dev/') ] }}"
+  with_dict: "{{ ansible_devices }}"
+  when:
+    - ansible_devices is defined
+    - item.value.removable == "0"
+    - item.value.partitions|count == 0
+    - item.value.holders|count == 0
+    - osd_auto_discovery
+
 - include: ./scenarios/collocated.yml
   when:
     - osd_scenario == 'collocated'
