@@ -10,15 +10,29 @@
     - /etc/ceph/
     - /etc/ceph/ceph.d/
 
+- name: check if ansible's running in a virtualenv
+  local_action: raw echo $VIRTUAL_ENV
+  register: in_virtualenv
+
+- debug: var=in_virtualenv
+
+- name: set ansible_selinux to true if in virtualenv
+  local_action: set_fact ansible_selinux="true"
+  when: in_virtualenv != ""
+
+- debug: var=ansible_selinux
+
 - name: template ceph_conf_overrides
   local_action: copy content="{{ ceph_conf_overrides }}" dest="{{ fetch_directory }}/ceph_conf_overrides_temp"
   become: false
   run_once: true
+  ignore_errors: true
 
 - name: get rendered ceph_conf_overrides
   local_action: set_fact ceph_conf_overrides_rendered="{{ lookup('template', '{{ fetch_directory }}/ceph_conf_overrides_temp') | from_yaml }}"
   become: false
   run_once: true
+  ignore_errors: true
 
 - name: "generate ceph configuration file: {{ cluster }}.conf"
   action: config_template
