@@ -182,10 +182,11 @@
       changed_when: false
 
     - name: stop non-containerized ceph osd(s)
-      service:
+      systemd:
         name: "{{ item }}"
         state: stopped
         enabled: no
+        masked: yes
       with_items: "{{ running_osds.stdout_lines }}"
 
     - set_fact:
