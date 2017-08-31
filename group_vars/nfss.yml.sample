@@ -13,8 +13,6 @@ dummy:
 # GENERAL #
 ###########
 
-#fetch_directory: fetch/
-
 #######################
 # Access type options #
 #######################

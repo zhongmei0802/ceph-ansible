@@ -92,7 +92,7 @@ openstack_pools:
 # The value for 'key' can be a pre-generated key,
 # e.g key: "AQDC2UxZH4yeLhAAgTaZb+4wDUlYOsr1OfZSpQ=="
 # By default, keys will be auto-generated.
-# 
+#
 # To have have ansible setfacl the generated key, set the acls var like so:
 # acls: ["u:nova:r--", "u:cinder:r--", "u:glance:r--", "u:gnocchi:r--"]
 openstack_keys:
@@ -105,14 +105,12 @@ openstack_keys:
 ##########
 # DOCKER #
 ##########
-ceph_mon_docker_subnet: "{{ public_network }}"# subnet of the monitor_interface
-
 # ceph_mon_docker_extra_env:
 #
 # Use this variable to add extra env configuration to run your mon container.
 # If you want to set a custom admin keyring you can set this variable like following:
-# ceph_mon_docker_extra_env: -e CLUSTER={{ cluster }} -e FSID={{ fsid }} -e MON_NAME={{ monitor_name }} -e ADMIN_SECRET={{ admin_secret }}
-ceph_mon_docker_extra_env: -e CLUSTER={{ cluster }} -e FSID={{ fsid }} -e MON_NAME={{ monitor_name }}
+# ceph_mon_docker_extra_env: -e ADMIN_SECRET={{ admin_secret }}
+ceph_mon_docker_extra_env: -e MON_NAME={{ monitor_name }}
 mon_docker_privileged: false
 mon_docker_net_host: true
 ceph_config_keys: [] # DON'T TOUCH ME

@@ -17,6 +17,7 @@ ExecStart=/usr/bin/docker run --rm --net=host \
    {% endif -%}
    -v /etc/localtime:/etc/localtime:ro \
    -e CEPH_DAEMON=MGR \
+   -e CLUSTER={{ cluster }} \
    {{ ceph_mgr_docker_extra_env }} \
    --name=ceph-mgr-{{ ansible_hostname }} \
    {{ ceph_docker_registry }}/{{ ceph_docker_image }}:{{ ceph_docker_image_tag }}
