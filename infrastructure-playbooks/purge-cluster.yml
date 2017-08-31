@@ -274,8 +274,8 @@
       blkid -t TYPE=crypto_LUKS -s PARTLABEL -s PARTUUID | grep "ceph.*." | grep -o PARTUUID.* | cut -d '"' -f 2
     register: encrypted_ceph_partuuid
 
-  - name: get osd data mount points
-    shell: "(grep /var/lib/ceph/osd /proc/mounts || echo -n) | awk '{ print $2 }'"
+  - name: get osd data and lockbox mount points
+    shell: "(grep /var/lib/ceph /proc/mounts || echo -n) | awk '{ print $2 }'"
     register: mounted_osd
     changed_when: false
 
